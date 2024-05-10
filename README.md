@@ -1,49 +1,37 @@
-## Data Science Experiments repo
+![alt](images/catalog-img.png)
+# Catalog of experiments for AI Studio demonstrations
 
-### This repository is dedicated to gathering experiments and scripts for internal User Acceptance Testing (iUAT) purposes on the Phoenix platform.
-----------
+### Welcome! 🙂
 
-#### Internal Nomenclatures:
-##### **Experiment:** Contains machine learning and/or deep learning algorithms within a complete pipeline (EDA, preprocessing, etc).
-##### **Script:** Does not contain machine learning and/or deep learning algorithms and is solely used to test inherent functionalities of task frameworks.
-
----
-#### Descriptions
-
-**Deep Learning** - experiments that use the two main frameworks in the field, tensorflow and torch.
-
-**Machine Learning** - experiments that use the main frameworks in the field such as sklearn and xgboost.
-
-**MLFlow** - This folder collects some experiments  from the Machine Learning and Deep Learning folders that have been modified to use MLFlow methods.
-
-**TensorBoard** - This folder collects some experiments from the Machine Learning and Deep Learning folders and also some scripts that have been modified to use TensorBoard methods.
-
-**Data Visualization** - scripts with the main frameworks used for this task.
-
-**Web Scrap** - scripts that use the main frameworks for data scraping, such as bs4 and URlib.
-
-**Notebooks for Demos** - Selected scripts and experiments made for live demonstrations of Phoenix following specific requirements such as time of execution.
-
-**Temp** - Temporary files that need to be organized, remade or deleted.
+Find the best experiments to showcase the main features of the AIS. Browse the catalog and explore the offered experiments. All the step-by-step instructions for the experiments are documented for easy reproduction by you.
 
 ---
 
-### Where to get the datasets
-
-#### 1. Share Point
-
-[[iUAT] Data Sources](https://hp.sharepoint.com/:f:/t/HPDataSciencePlatform/Egx7evqicM5Poxr0aA7BwXABwLS4O1SY7FPjd5LEFKRAPQ?e=klCxGk)
-
-![alt](images_readme/data-sources.jpg)
-
-
-The main folder names are the same as those in the repository. To download the dataset you want, simply go to the corresponding folder of the experiment/script you're interested in using within SharePoint, click on the three dots, and select 'Download,' as shown in the image below:
-
-![alt](images_readme/download-datasets.jpg)
+### 01. [AI Studio Features 😎](AI_Studio_Features/)
+*Here you will find experiments to demonstrate specific features of the AI Studio, such as local deployment, monitor tab, and data fabric.*
 
 ---
 
-#### 2. S3 Bucket
-Path: `s3://phoenix-dev-bkt/[iUAT] Data Sources/`
+### 02. [Classic ML Experiments 🤖](Classic_ML/)
+*This directory contains experiments with more classical machine learning models such as classification and regression, clustering, and time series.*
 
-Use this path when creating your project on Data Fabric.
+---
+
+### 03. [Audio Experiments 🔉](Audio_Experiments/)
+*What about audio experiments on AI Studio? Here you'll find the best experiments involving the training and inference of deep learning models with audio-related tasks, such as voice-to-text and text-to-voice conversion. Recommended for showcasing features related to GPU, Monitor Table, NEMO (Nvidia's Experiment Management System), and Nvidia technology. TOffers models for inference via Hugging Face.*
+
+#### **💚 Offers NVIDIA NGC examples**
+---
+
+### 04. [Computer Vision Experiments 📸](Computer_Vision/)
+*Want to show the audience how to train and make inferences with models and architectures that involve images as input and/or output? Here you'll find the best experiments to showcase these features. Various deep learning models, from img-to-img to generative models!*
+
+---
+
+### 05. [NLP Experiments 📄](Natural_Language/)
+*Are you interested in demonstrating classic language models for various NLP tasks within AI Studio? Here you'll find the best experiments to show how to train and make inferences with classic language models like BERT, spaCy, and many others involving classic tasks such as question answering.*
+
+---
+
+### 06. [LLM Experiments 🦙](LLM_experiments/)
+*How about showcasing the most popular LLMs within AI Studio? Here you'll find the best experiments using the latest technologies in the field of LLMs like LLaMa 2 and Pythia, in addition to orchestrators like LangChain!*
