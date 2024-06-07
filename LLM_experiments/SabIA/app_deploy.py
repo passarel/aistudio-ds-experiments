@@ -17,9 +17,9 @@ class SabIAQueryModel(mlflow.pyfunc.PythonModel):
         os.environ["FORCE_CMAKE"] = "1"
         
         pip.main(["install", "llama-cpp-python==0.2.55"])
-        pip.main(["install", "langchain"])
+        pip.main(["install", "langchain==0.1.17"])
         pip.main(["install", "tiktoken"])
-        pip.main(["install", "chromadb"])
+        pip.main(["install", "chromadb==0.4.24"])
         pip.main(["install", "PyMuPDF"])
         logging.info("Installed dependencies.")
        

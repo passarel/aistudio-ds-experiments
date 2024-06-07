@@ -6,7 +6,7 @@ environ["CMAKE_ARGS"] = "-DLLAMA_CUBLAS=on"
 environ["FORCE_CMAKE"] = "1"
 
 pip.main(["install", "llama-cpp-python==0.2.55"])
-pip.main(["install", "langchain", "tiktoken", "chromadb", "PyMuPDF"])
+pip.main(["install", "langchain==0.1.17", "tiktoken", "chromadb==0.4.24", "PyMuPDF"])
 
 import os
 import time
@@ -32,7 +32,7 @@ class MainApplication:
         vectordb = ChromaVectorDB(embedding_model=embedding)
 
         self.demo_loader_chain = DemoLoaderChain(vectordb=vectordb, tokenizer=tokenizer, docs_paths=["./docs/AIStudioDoc.pdf"])
-        self.llm_model = DemoModel(model_path=inference_model_path, n_gpu_layers=33, stop_tags=["</answer>"])
+        self.llm_model = DemoModel(model_path=inference_model_path, n_gpu_layers=32, stop_tags=["</answer>"])
         self.prompt_template = DemoPromptTemplate()
         self.prompt = DemoPrompt(self.prompt_template, vectordb)
         self.memory = Memory(20)
