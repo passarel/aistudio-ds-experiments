@@ -7,14 +7,14 @@ from src.chains.demo_query_chain import DemoQueryChain
 
 class DemoChains(ComposedChain):
     """
-        Specialization of a `ComposedChain`.\n
+        Specialization of a ComposedChain.\n
         Functions:
             - run(): implements ComposedChain's summon function.
     """
 
     def run(self):
         """
-            Implements ComposedChain's `summon` function.\n
+            Implements ComposedChain's summon function.\n
             Parameter:
                 None
             Return:

@@ -13,9 +13,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -58,6 +60,7 @@
   display: flex;
   flex-direction: row;
 }
+
 .vector-module-card{
 	margin-left:15px;
   margin-right:15px;
@@ -67,18 +70,18 @@
   height:518px;
   /* overflow-y:scroll; */
  }
- 
+
  .prompt-text-area .vn-textarea{
   height:300px;
   /* overflow-y:scroll; */
  }
- 
+
  .output-text-area .vn-textarea{
   height:530px;
   /* overflow-y:scroll; */
  }
 
-.prompt-module-card{
+ .prompt-module-card{
 	margin-left:15px;
 	margin-right:15px;
 }
@@ -90,23 +93,22 @@
 
 /* Division */
 #root > div{
- margin-right:0px;
- width:1200px;
-}
+  margin-right:0px;
+  width:1200px;
+ }
 
-
-.input-text-area-container{
+ .input-text-area-container{
   color: #fff !important;
   /* padding: 20px; */
 }
 
-.input-text-area-container > {
+.input-text-area-container {
   color: #fff !important;
 }
+
 .submit-btn-container{
   margin-bottom: 20px;
 }
-
 
 .input-query-card{
   margin-bottom: 20px;
@@ -145,10 +147,12 @@
   flex-direction: column;
   justify-content: center;
 }
+
 .header-logo{
   display: flex;
   justify-content: center;
 }
+
 .title-info{
   display: flex;
   flex-direction: column;
@@ -156,6 +160,7 @@
   margin-left: 20px;
   text-align: left;
 }
+
 .title{
   font-size: 30px;
   line-height: normal;
@@ -171,6 +176,7 @@
   flex-direction: column;
   justify-content: center;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .outer-padding{
@@ -195,3 +201,46 @@
 .card-not-expanded{
   width: 33%;
 }
+
+.button-edit-prompt{
+  width: 20%;
+  position: relative; /* ou 'absolute', dependendo do contexto */
+  top: 5px; /* Ajuste este valor conforme necessário */
+  cursor: pointer;
+}
+
+.modal-prompt{
+  width: 80% !important;
+  height: 600px !important;
+  max-width: 1000px !important;
+
+}
+
+.text-prompt .vn-textarea{
+  height:500px;
+  /* overflow-y:scroll; */
+ }
+
+
+
+
+.button-prompt-edit{
+  width: 20%;
+  position: relative; /* ou 'absolute', dependendo do contexto */
+  top: 2%; /* Ajuste este valor conforme necessário */
+
+}
+
+.inset-pdf-button{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10px;
+  top: 5%;
+  cursor: pointer;
+}
+
+.default-prompt{
+  height: 200px;
+  /* overflow-y:scroll; */
+ }

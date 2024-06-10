@@ -6,7 +6,7 @@ environ["CMAKE_ARGS"] = "-DLLAMA_CUBLAS=on"
 environ["FORCE_CMAKE"] = "1"
 
 pip.main(["install", "llama-cpp-python==0.2.55"])
-pip.main(["install", "langchain", "tiktoken", "chromadb", "PyMuPDF"])
+pip.main(["install", "langchain==0.1.17", "tiktoken", "chromadb==0.4.24", "PyMuPDF"])
 
 import os
 import time
@@ -21,7 +21,6 @@ from framework_classes.message import Message
 from src.models.demo_model import DemoModel
 from src.prompt_templates.demo_prompt_template import DemoPromptTemplate
 from src.prompts.demo_prompt import DemoPrompt
-from src.utils.base64_utils import Base64ToPDF
 
 class MainApplication:
     def __init__(self):
@@ -29,24 +28,14 @@ class MainApplication:
         inference_model_path = os.path.join(base_model_path, "ggml-model-f16-Q5_K_M.gguf")
 
         tokenizer = SabIATokenizer()
-        embedding = SabIAEmbeddingsModel(model_path=inference_model_path, tokenizer=tokenizer, n_gpu_layers=0)
+        embedding = SabIAEmbeddingsModel(model_path=inference_model_path, tokenizer=tokenizer, n_gpu_layers=33)
         vectordb = ChromaVectorDB(embedding_model=embedding)
 
         self.demo_loader_chain = DemoLoaderChain(vectordb=vectordb, tokenizer=tokenizer, docs_paths=["./docs/AIStudioDoc.pdf"])
-        #self.llm_model = DemoModel(model_path=inference_model_path, n_gpu_layers=33, stop_tags=["</answer>"])
+        self.llm_model = DemoModel(model_path=inference_model_path, n_gpu_layers=32, stop_tags=["</answer>"])
         self.prompt_template = DemoPromptTemplate()
         self.prompt = DemoPrompt(self.prompt_template, vectordb)
         self.memory = Memory(20)
-
-    def add_pdf(self, base64_pdf):
-        import uuid
-        from src.utils.base64_utils import Base64ToPDF
-        pdf_path = f"/phoenix/tmp/{uuid.uuid1()}"
-        Base64ToPDF(pdf_path).convert_from_base64(base64_pdf)
-        DemoLoaderChain(self.vectordb, self.tokenizer, docs_paths = pdf_path).run()
-        return {
-            "success": True
-        }    
 
     def run(self):
         while True: 
@@ -67,9 +56,4 @@ class MainApplication:
 
 if __name__ == "__main__":
     app = MainApplication()
-    print("-------------- Adding PDF ---------------------")
-    with open("rafa123.txt") as file:
-        base64_str=file.read()
-    app.add_pdf(base64_str)
-    print("-------------- PDF added  ---------------------")
-    #app.run()
+    app.run()

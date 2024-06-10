@@ -5,12 +5,29 @@ import { Card } from '@veneer/core';
 import { IconInfo } from '@veneer/core';
 import { Toggle } from '@veneer/core';
 import { Button } from '@veneer/core';
-import { TextArea } from '@veneer/core'
+import { TextArea } from '@veneer/core';
+import { IconDocument } from '@veneer/core';
+import { ConfirmationModal } from '@veneer/core';
+import { IconTextAlignCenter } from '@veneer/core';
+import { IconPlus } from '@veneer/core'
+
 import './App.css'
 
 function App() {
 	const [inputQuery, setInputQuery] = useState("");
 	const [modelResponse, setModelResponse] = useState("");
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isModalVisiblePDF, setIsModalVisiblePDF] = useState(false);
+	const showModal = () => setIsModalVisible(true);
+	const showModalPDF = () => setIsModalVisiblePDF(true);
+	const [yourPrompt, setYourPrompt] = useState("");
+
+  	const hideModal = () => setIsModalVisible(false);
+	const hideModalPDF = () => setIsModalVisiblePDF(false);
+	const [showPromptEdit, setShowPromptEdit] = useState(false);
+
+	const [loading, setLoading] = useState(false);
+
 	// const [loading, setLoading] = useState(false);
 	const [interactionHistory, setInteractionHistory] = useState("");
 	const [promptEngineering, setPromptEngineering] = useState(""); 
@@ -66,50 +83,358 @@ function App() {
 		setShowBlackBoxInfo(!showBlackBoxInfo);
 	}
 	
-	async function submitInput() {
-	  console.log("Send:", inputQuery);
-	  try {
-		// setLoading(true);
-		const requestBody = {
-		  inputs: {
-			question: [inputQuery]
-		  },
-		  params: {}
-		};
-		const response = await fetch("/invocations", {
-		  method: "POST",
-		  headers: {
-			"Content-Type": "application/json;charset=UTF-8",
-		  },
-		  body: JSON.stringify(requestBody),
-		});
-  
-		if (!response.ok) {
-		  throw new Error(`HTTP error! status: ${response.status}`);
-		};
-  
-		const jsonResponse = await response.json();
-		console.log("JSON Response:", jsonResponse);
-  
-		const predictions = jsonResponse.predictions;
-		setModelResponse(predictions.output || "No output provided by the model.");
-		setInteractionHistory(predictions.history || "No output History.");
-		setPromptEngineering(predictions.prompt || "No prompt retrieved.");
-		setVectorChunks(predictions.chunks.join('\n') || "No chunks retrieved.");
-  
-		
-		// setLoading(false);
-	  } catch (error) {
-		console.error("Error when calling the request:", error);
-		// setLoading(false);
-	  }
-	}
+// Submit Input
+// async function submitPDF(event) {
+// 	console.log("Chamando submitPDF");
+//     const file = event.target.files[0];
+//     if (file) {
+ 
+        
+       
+//         const reader = new FileReader();
 
+//         reader.onload = async (loadEvent) => {
+//             const base64String = loadEvent.target.result;
+//             const base64FormattedString = base64String.replace('data:application/pdf;base64,', '');
+
+           
+
+
+//             try {
+             
+//                 const requestBody = {
+//                     inputs: {
+//                         pdfBase64: base64FormattedString
+//                     },
+//                     params: {}
+//                 };
+
+//                 const response = await fetch("/invocations", {
+//                     method: "POST",
+//                     headers: {
+//                         "Content-Type": "application/json;charset=UTF-8",
+//                     },
+//                     body: JSON.stringify(requestBody),
+//                 });
+
+//                 if (!response.ok) {
+//                     throw new Error(`HTTP error! status: ${response.status}`);
+//                 }
+
+//                 const jsonResponse = await response.json();
+//                 console.log("JSON Response:", jsonResponse);
+
+                
+//                 setVectorChunks(jsonResponse.predictions.chunks.join('\n') || "No chunks retrieved.");
+                
+//             } catch (error) {
+//                 console.error("Error when sending the PDF:", error);
+//             } finally {
+//                 // setLoading(false);
+//             }
+//         };
+
+//         reader.onerror = (error) => {
+//             console.error('Error reading the PDF file:', error);
+//         };
+
+        
+//         reader.readAsDataURL(file);
+//     }
+// }
+
+// async function insertPDF() {
+// 	console.log("Calling insertPD");
+//     const fileInput = document.getElementById('pdfUploader');
+  
+
+//     fileInput.onchange = submitPDF;
+  
+  
+//     fileInput.click();
+// }
+
+// event input
+async function submitPDF(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = async (loadEvent) => {
+            const base64String = loadEvent.target.result;
+            const base64FormattedString = base64String.split(',')[1]; 
+
+            console.log("PDF em base64:", base64FormattedString);
+
+            try {
+                const requestBody = {
+                    inputs: {
+                        query: [""], 
+                        prompt: [""],
+                        document: [base64FormattedString]
+                    },
+                    params: {
+                        add_pdf: true, 
+                        get_prompt: false, 
+                        set_prompt: false
+                    }
+                };
+
+                const response = await fetch("/invocations", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json;charset=UTF-8",
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const jsonResponse = await response.json();
+                console.log("JSON Response:", jsonResponse);
+
+                if (jsonResponse && jsonResponse.predictions) {
+                    const { chunks } = jsonResponse.predictions;
+                    setVectorChunks(Array.isArray(chunks) ? chunks.join('\n') : "PDF sent successfully");
+                } else {
+                    console.error('Unexpected JSON response format:', jsonResponse);
+                }
+            } catch (error) {
+                console.error("Error when sending the PDF:", error);
+            }
+        };
+
+        reader.onerror = (error) => {
+            console.error('Error reading the PDF file:', error);
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+async function insertPDF() {
+    const fileInput = document.getElementById('pdfUploader');
+    fileInput.onchange = submitPDF;
+    fileInput.click();
+}
+
+
+
+
+//submit input
+// async function submitCustomPrompt() {
+// 	console.log("Sending custom prompt:", yourPrompt);
+// 	try {
+// 	  const requestBody = {
+// 		inputs: {
+// 		  custom_prompt: yourPrompt
+// 		},
+// 		params: {}
+// 	  };
+// 	  const response = await fetch("/invocations", {
+// 		method: "POST",
+// 		headers: {
+// 		  "Content-Type": "application/json;charset=UTF-8",
+// 		},
+// 		body: JSON.stringify(requestBody),
+// 	  });
+  
+// 	  if (!response.ok) {
+// 		throw new Error(`HTTP error! status: ${response.status}`);
+// 	  };
+  
+// 	  const jsonResponse = await response.json();
+// 	  console.log("JSON Response:", jsonResponse);
+  
 	
-	const showVectorInfo = expandedSection === "vector-info"
-	const showHistoryInfo = expandedSection === "history-info"
-	const showPromptInfo = expandedSection === "prompt-info"
-	const showLlmInfo = expandedSection === "llm-info"
+// 	  setPromptEngineering(jsonResponse.predictions.prompt || "No prompt retrieved.");
+  
+// 	} catch (error) {
+// 	  console.error("Error when sending the custom prompt:", error);
+// 	} finally {
+// 	  // setLoading(false); 
+// 	}
+//   }
+
+// event input
+async function submitInput() {
+    console.log("Send:", inputQuery);
+    try {
+        // setLoading(true);
+        const requestBody = {
+            inputs: {
+                query: [inputQuery], 
+                prompt: [""], 
+                document: [""] 
+            },
+			params: {
+				add_pdf: false, 
+				get_prompt: false, 
+				set_prompt: false
+			}
+        };
+        const response = await fetch("/invocations", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=UTF-8",
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        };
+
+        const jsonResponse = await response.json();
+        console.log("JSON Response:", jsonResponse);
+
+        
+        const { output, history, prompt, chunks } = jsonResponse.predictions;
+
+        
+        setModelResponse(output || "No output provided by the model.");
+        setInteractionHistory(history || "No interaction history.");
+        setPromptEngineering(prompt || "No prompt retrieved.");
+
+        
+        setVectorChunks(Array.isArray(chunks) ? chunks.join('\n') : "No chunks retrieved.");
+
+        
+    } catch (error) {
+        console.error("Error when calling the request:", error);
+        // setLoading(false);
+    }
+}
+
+
+
+	  
+//	async function submitInput() {
+//		console.log("Send:", inputQuery);
+//		setLoading(true); 
+//		try {
+//		  const requestBody = {
+//			inputs: {
+//			  question: [inputQuery]
+//			},
+//			params: {}
+//		  };
+//		  const response = await fetch("/invocations", {
+//			method: "POST",
+//			headers: {
+//			  "Content-Type": "application/json;charset=UTF-8",
+//			},
+//			body: JSON.stringify(requestBody),
+//		  });
+//	  
+//		  if (!response.ok) {
+//			throw new Error(`HTTP error! status: ${response.status}`);
+//		  }
+//	  
+//		  const jsonResponse = await response.json();
+//		  console.log("JSON Response:", jsonResponse);
+//	  
+//		 
+//		  setModelResponse(jsonResponse.predictions.output || "No output provided by the model.");
+//		  setInteractionHistory(jsonResponse.predictions.history || "No output History.");
+//		  setPromptEngineering(jsonResponse.predictions.prompt || "No prompt retrieved.");
+//		  setVectorChunks(jsonResponse.predictions.chunks.join('\n') || "No chunks retrieved.");
+//		} catch (error) {
+//		  console.error("Error when calling the request:", error);
+//		} finally {
+//		  setLoading(false); 
+//		}
+//	  }
+
+
+
+
+
+async function submitCustomPrompt(yourPrompt) {
+    console.log("Sending custom prompt:", yourPrompt);
+    try {
+        const requestBody = {
+            inputs: {
+                query: [""], 
+                document: [""], 
+                prompt: [yourPrompt] 
+            },
+            params: {
+                add_pdf: false,
+                get_prompt: false,
+                set_prompt: true
+            }
+        };
+
+        const response = await fetch("/invocations", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=UTF-8",
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const jsonResponse = await response.json();
+        console.log("JSON Response:", jsonResponse);
+
+        setPromptEngineering(jsonResponse.predictions.prompt || "Prompt send");
+		
+    } catch (error) {
+        console.error("Error when sending the custom prompt:", error);
+    } finally {
+        setLoading(false);
+    }
+}
+
+async function fetchPrompt() {
+    try {
+        const requestBody = {
+            inputs: {
+                query: [""],
+                document: [""],
+                prompt: [""] 
+            },
+            params: {
+                add_pdf: false,
+                get_prompt: true,  
+                set_prompt: false
+            }
+        };
+
+        const response = await fetch("/invocations", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=UTF-8",
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const jsonResponse = await response.json();
+        console.log("Fetched Prompt:", jsonResponse);
+
+        
+        setYourPrompt(jsonResponse.predictions.prompt_template || "");
+        showModal();  
+    } catch (error) {
+        console.error("Error fetching the custom prompt:", error);
+    }
+}
+
+
+  const showVectorInfo = expandedSection === "vector-info"
+  const showHistoryInfo = expandedSection === "history-info"
+  const showPromptInfo = expandedSection === "prompt-info"
+  const showLlmInfo = expandedSection === "llm-info"
 
   return (
     <div>
@@ -142,9 +467,12 @@ function App() {
 						<div className='input-query-toggle'>
 							<Toggle className="white-box-toggle" label="White Box" onChange={setShowWhiteBox} />
 						</div>
-						<Button className="submit-button" onClick={submitInput}>
-							Submit input
-						</Button>
+						{loading ? (
+							<Button disabled>Load...</Button> 
+							) : (
+							<Button className="submit-button" onClick={submitInput}>Submit input</Button>
+							)}
+
 					</div>
 					
 				</div>
@@ -167,6 +495,29 @@ function App() {
 												<IconInfo size={24} onClick={toggleVectorInfo} filled />:
 												<IconInfo size={24} onClick={toggleVectorInfo} />
 											}
+										</div>
+										<div className='inset-pdf-button'>
+											<IconPlus size={24}  onClick={showModalPDF}>
+												Insert PDF
+											</IconPlus>
+											{isModalVisiblePDF && (
+										<div className='modal-prompt'>
+											<ConfirmationModal
+											show={isModalVisiblePDF}
+											confirmButtonLabel="Submit PDF"
+											closeButtonLabel="Cancel"
+         									title="Insert PDF"
+											onConfirm={() =>{
+												insertPDF();
+												hideModalPDF();}}
+											onClose={hideModalPDF}
+
+										> 
+										<p>To create chunks, please upload a PDF document.</p>
+										</ConfirmationModal>
+										</div>
+										)}
+											<input type="file" id="pdfUploader" style={{display: 'none'}} accept="application/pdf" onChange={submitPDF} />
 										</div>
 										
 									</div>
@@ -204,6 +555,7 @@ function App() {
 											<IconInfo size={24} onClick={toggleHistoryInfo} />
 										}
 									</div>
+									<div className='add-prompt'></div>
 								</div>
 								<div className="input-text-area-container">	
 									<TextArea className="input-text-area" 
@@ -224,6 +576,42 @@ function App() {
 												<IconInfo size={24} onClick={togglePromptInfo} />
 											}
 										</div>
+										<IconPlus className="button-edit-prompt" onClick={fetchPrompt}>
+											Prompt
+										 </IconPlus>
+										 {isModalVisible && (
+											<div className='modal-prompt'>
+												<ConfirmationModal
+													show={isModalVisible}
+													confirmButtonLabel="Submit"
+													closeButtonLabel="Cancel"
+													title="Prompt Navigator"
+													onConfirm={() => {
+														submitCustomPrompt(yourPrompt);
+														hideModal();
+													}} 
+													onClose={hideModal}
+												>
+													<TextArea 
+													className='text-prompt'
+														id="resize-text-area" 
+														label="Your Prompt:"
+														resize="vertical"
+														separateLabel
+														value={yourPrompt}
+														//onChange={(e) => setYourPrompt(e.target.value)}
+														onChange={(e) => {
+													
+															const value = e.target ? e.target.value : e;
+															setYourPrompt(value);
+														}}
+		
+													/>
+												</ConfirmationModal>
+											</div>	
+										)}
+
+
 									</div>
 									<div className="prompt-info">
 										{ showPromptInfo &&
@@ -239,6 +627,9 @@ function App() {
 											separateLabel
 											onChange={() => {}} 
 										/>
+	
+		
+				
 									</div>
 								</div>
 						</div>
@@ -308,19 +699,6 @@ function App() {
 						</div>
 					}
 				/>
-				{/* <Card className="output-external-card"
-					border="outlined"
-					headers
-					content={
-						<div>
-							<TextArea className="output-external-area" id="output-text"
-								value={modelResponse || ""} 
-								readOnly
-								onChange={() => {}} 
-							/>
-						</div>
-					}
-				/> */}
 			</div>
 		}
 	</div>
@@ -328,7 +706,3 @@ function App() {
 }
 
 export default App
-
-
-
-
