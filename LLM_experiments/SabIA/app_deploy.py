@@ -15,7 +15,7 @@ class SabIAQueryModel(mlflow.pyfunc.PythonModel):
         os.environ["CMAKE_ARGS"] = "-DLLAMA_CUBLAS=on"
         os.environ["FORCE_CMAKE"] = "1"
         
-        pip.main(["install", "llama-cpp-python==0.2.55"])
+        pip.main(["install", "llama-cpp-python==0.2.55", "numpy==1.23"])
         pip.main(["install", "langchain==0.1.17"])
         pip.main(["install", "tiktoken"])
         pip.main(["install", "chromadb==0.4.24"])
@@ -56,9 +56,8 @@ class SabIAQueryModel(mlflow.pyfunc.PythonModel):
         pdf_path = f"/phoenix/tmp/{uuid.uuid1()}"
         Base64ToPDF(pdf_path).convert_from_base64(base64_pdf)
         DemoLoaderChain(self.vectordb, self.tokenizer, docs_paths = [pdf_path]).run()
-        return {
-            "success": True
-        }
+        return self.reset_history()
+
 
     def get_prompt_template(self):
         return {
@@ -67,6 +66,10 @@ class SabIAQueryModel(mlflow.pyfunc.PythonModel):
 
     def set_prompt_template(self, new_prompt):
         self.prompt.template.pattern = new_prompt
+        return self.reset_history()
+
+    def reset_history(self):
+        self.memory.history = []
         return {
             "success": True
         }
@@ -97,6 +100,8 @@ class SabIAQueryModel(mlflow.pyfunc.PythonModel):
             return self.get_prompt_template()
         elif params["set_prompt"]:
             return self.set_prompt_template(model_input['prompt'][0])
+        elif params["reset_history"]:
+            return self.reset_history()
         else:
             return self.inference(context, model_input['query'][0])
 
@@ -112,11 +117,13 @@ class SabIAQueryModel(mlflow.pyfunc.PythonModel):
             ColSpec("string", "history"),
             ColSpec("string", "prompt"),
             ColSpec("string", "output"),
+            ColSpec("boolean", "success")
         ])
         param_schema = ParamSchema([
             ParamSpec("add_pdf", "boolean", False),
             ParamSpec("get_prompt", "boolean", False),
-            ParamSpec("set_prompt", "boolean", False)
+            ParamSpec("set_prompt", "boolean", False),
+            ParamSpec("reset_history", "boolean", False)
         ])
         signature = ModelSignature(inputs=input_schema, outputs=output_schema, params=param_schema)
         artifacts = {"models": model_folder, "docs": docs_folder, "demo": demo_folder}

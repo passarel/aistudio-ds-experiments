@@ -5,7 +5,7 @@ environ["CUDACXX"] = "/usr/local/cuda-12/bin/nvcc"
 environ["CMAKE_ARGS"] = "-DLLAMA_CUBLAS=on"
 environ["FORCE_CMAKE"] = "1"
 
-pip.main(["install", "llama-cpp-python==0.2.55"])
+pip.main(["install", "llama-cpp-python==0.2.55", "numpy==1.23"])
 pip.main(["install", "langchain==0.1.17", "tiktoken", "chromadb==0.4.24", "PyMuPDF"])
 
 import os
