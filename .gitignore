@@ -1,2 +1,6 @@
 data
 */mlruns
+.Trash-1000
+*node_modules/
+*.ipynb_checkpoints/
+

@@ -24,7 +24,7 @@ Find the best experiments to showcase the main features of the AIS. Browse the c
 ---
 
 ### 04. [Computer Vision Experiments 📸](Computer_Vision/)
-*Want to show the audience how to train and make inferences with models and architectures that involve images as input and/or output? Here you'll find the best experiments to showcase these features. Various deep learning models, from img-to-img to generative models!*
+*Want to show the audience how to train and make inferences with models and architectures that involve images as input and/or output? Here you'll find the best experiments to showcase these features. Various deep learning models, from img-to-img to generative models! *
 
 ---
 

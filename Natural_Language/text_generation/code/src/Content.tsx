@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Card, Button } from "@veneer/core";
+import { Card, Button, Scrollbar } from "@veneer/core";
 import TextArea from "./TextArea";
 import TextBox from "./TextBox";
 
@@ -43,7 +43,8 @@ const Content: FC = () => {
       setOutput(json);
       // await wait(2000);
       // setOutput({
-      //   predictions: "To be or not to be, that is the question.",
+      //   predictions:
+      //     "To be or not to be, that is the question.\nLong Text lets see what happens.\nMore long text. Lets see how long this can go.\nTest Test Test test\nTo be or not to be, that is the question.\nLong Text lets see what happens.\nMore long text. Lets see how long this can go.\nTest Test Test test\nTo be or not to be, that is the question.\nLong Text lets see what happens.\nMore long text. Lets see how long this can go.\nTest Test Test test\n\n\nTo be or not to be, that is the question.\nLong Text lets see what happens.\nMore long text. Lets see how long this can go.\nTest Test Test test\nTo be or not to be, that is the question.\nLong Text lets see what happens.\nMore long text. Lets see how long this can go.\nTest Test Test test",
       // });
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
@@ -105,14 +106,13 @@ const Content: FC = () => {
           border="outlined"
           className="flex h-full flex-col justify-center"
           content={
-            <div>
-              <TextArea
-                className="h-auto pb-0"
-                placeholder="Output"
-                title="Output"
-                value={output?.predictions || ""}
-                readOnly
-              />
+            <div className={"h-full p-[30px]"}>
+              <h3 className="title-small">Output</h3>
+              <div className="box-border whitespace-pre-line rounded-xl border border-solid border-[#666666]">
+                <Scrollbar className="max-h-[400px] min-h-[400px] p-[20px]">
+                  {output?.predictions || ""}
+                </Scrollbar>
+              </div>
             </div>
           }
         />
